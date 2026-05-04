@@ -1,7 +1,8 @@
 import { Chat } from "./components/Chat";
 import { AgentGraph } from "./components/AgentGraph";
 import { EventTimeline } from "./components/EventTimeline";
-import { SessionList } from "./components/SessionList";
+import { LibrarySidebar } from "./components/LibrarySidebar";
+import { ArtifactModal } from "./components/SavedArtifacts";
 import { useDemoStore } from "./lib/store";
 
 export default function App() {
@@ -13,11 +14,11 @@ export default function App() {
   return (
     <div className="h-full flex flex-col">
       <Header userId={userId} sessionId={sessionId} isStreaming={isStreaming} />
-      <main className="flex-1 grid grid-cols-1 lg:grid-cols-[200px_1fr_440px_360px] overflow-hidden min-h-0">
+      <main className="flex-1 grid grid-cols-1 lg:grid-cols-[220px_1fr_440px_360px] overflow-hidden min-h-0">
         <aside className="hidden lg:flex flex-col min-h-0">
-          <SectionLabel>History</SectionLabel>
+          <SectionLabel>Library</SectionLabel>
           <div className="flex-1 min-h-0">
-            <SessionList />
+            <LibrarySidebar />
           </div>
         </aside>
         <section className="border-r border-neutral-200 bg-white flex flex-col min-h-0">
@@ -47,6 +48,7 @@ export default function App() {
           </div>
         </section>
       </main>
+      <ArtifactModal />
     </div>
   );
 }

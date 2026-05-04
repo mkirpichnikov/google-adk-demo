@@ -182,7 +182,7 @@ server.py  ─── get/create session via MongoSessionService
 | `sessions` | `MongoSessionService.append_event` | `MongoSessionService.get_session` (and `_doc_to_session`) | `_id` (default), no vector index |
 | `memory` | `save_preference` tool, `MongoMemoryService.add_session_to_memory` | `MongoMemoryService.search_memory` (called from server, every turn) | `memory_vector_index` (vector + filter on `user_id`) |
 | `products` | `scripts/ingest.py` | `search_products` tool | `products_vector_index` |
-| `artifacts` | `record_artifact` tool | (not currently read by agent; demo / audit) | `_id` |
+| `artifacts` | `record_artifact` tool | `GET /artifacts?user_id=...` (Saved tab in the library sidebar) | `_id`, `user_id` for filtering |
 
 ---
 

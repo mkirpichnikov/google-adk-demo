@@ -96,6 +96,55 @@ class SessionReplay(BaseModel):
     turns: list[ReplayTurn]
 
 
+class ArtifactSummary(BaseModel):
+    artifact_id: str
+    kind: str
+    title: str
+    content: str
+    session_id: str | None
+    created_at: str | None
+
+
+class ArtifactList(BaseModel):
+    artifacts: list[ArtifactSummary]
+
+
+def _artifact_title(kind: str, content: str) -> str:
+    """Pick a human title from the artifact content.
+
+    The Planner's reply format is `## <Kind>\\n### <Specific name>` — the
+    deeper heading is the descriptive one, so prefer the second heading
+    when the first matches the kind label.
+    """
+    fallback = kind.replace("_", " ").title()
+    if not content:
+        return fallback
+
+    headings: list[str] = []
+    for line in content.splitlines():
+        s = line.strip()
+        if s.startswith("#"):
+            text = s.lstrip("#").strip()
+            if text:
+                headings.append(text)
+        if len(headings) >= 2:
+            break
+
+    if not headings:
+        # No headings — first non-empty line, truncated.
+        for line in content.splitlines():
+            s = line.strip()
+            if s:
+                return s[:80]
+        return fallback
+
+    first = headings[0]
+    # If the first heading is the kind label, prefer the next one.
+    if len(headings) >= 2 and first.lower().replace(" ", "_") == kind.lower():
+        return headings[1]
+    return first
+
+
 def _extract_title(events: list[dict[str, Any]]) -> str:
     """Pick the first user-authored text part as the chat title."""
     for ev in events:
@@ -229,6 +278,36 @@ async def list_user_sessions(user_id: str, limit: int = 50) -> SessionList:
             )
         )
     return SessionList(sessions=summaries)
+
+
+@app.get("/artifacts", response_model=ArtifactList)
+async def list_user_artifacts(user_id: str, limit: int = 50) -> ArtifactList:
+    """Most-recent-first list of artifacts saved for the given user."""
+    cursor = (
+        db.artifacts()
+        .find(
+            {"user_id": user_id},
+            projection={"_id": 1, "kind": 1, "content": 1, "session_id": 1, "created_at": 1},
+        )
+        .sort("created_at", -1)
+        .limit(limit)
+    )
+    artifacts: list[ArtifactSummary] = []
+    for doc in cursor:
+        kind = doc.get("kind", "artifact")
+        content = doc.get("content", "") or ""
+        ts = doc.get("created_at")
+        artifacts.append(
+            ArtifactSummary(
+                artifact_id=str(doc["_id"]),
+                kind=kind,
+                title=_artifact_title(kind, content),
+                content=content,
+                session_id=doc.get("session_id"),
+                created_at=ts.isoformat() if ts else None,
+            )
+        )
+    return ArtifactList(artifacts=artifacts)
 
 
 @app.get("/sessions/{session_id}", response_model=SessionReplay)

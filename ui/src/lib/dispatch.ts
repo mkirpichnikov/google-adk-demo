@@ -92,6 +92,14 @@ export function dispatchEvent(event: ServerEvent) {
           store.attachMemoryRecall(msgId, event.payload as import("./types").MemoryHit[]);
         }
       }
+      // After a successful record_artifact, refresh the Saved tab so the
+      // new entry appears (slight delay to give Mongo's secondary the
+      // chance to be readable).
+      if (event.tool === "record_artifact") {
+        setTimeout(() => {
+          useDemoStore.getState().refreshArtifacts();
+        }, 600);
+      }
       break;
     }
 

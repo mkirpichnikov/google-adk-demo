@@ -123,15 +123,19 @@ data/
   products.json         sample grocery products
 ui/                     Vite + React + TypeScript + ReactFlow + Tailwind v4
   src/
-    App.tsx             3-column layout (graph | chat | event timeline)
+    App.tsx             4-column layout (library | graph | chat | event timeline)
     components/
       AgentGraph.tsx    ReactFlow topology with live pulse + edge animations
       AgentNode.tsx     custom node renderer (orchestrator/specialist/tool/db)
       Chat.tsx          chat bubbles, product cards, memory cards, suggestions
       EventTimeline.tsx chronological event log with timing
+      LibrarySidebar.tsx tabbed sidebar — Chats (sessions) and Saved (artifacts)
+      SessionList.tsx   row renderer for the Chats tab
+      SavedArtifacts.tsx row renderer + modal for the Saved tab
     lib/
       types.ts          wire protocol mirror
       sse.ts            POST /chat/stream → SSE-over-fetch parser
+      prompts.ts        suggested-prompt pools, sampled fresh on each load
       store.ts          zustand store
       dispatch.ts       reduce server events into store state
 ```
@@ -149,8 +153,9 @@ Cloud Run deployment commands are in [ARCHITECTURE.md](ARCHITECTURE.md#gcp-cli-s
 
 ## What's worth understanding from the running app
 
-- **The live agent graph** (left panel) — every agent transfer, tool call, and MongoDB collection access lights up in real time. Multi-agent delegation made visible.
-- **The event timeline** (right panel) — exact chronology with millisecond timing on every operation. Includes labelled `$vectorSearch` rows for retrieval steps.
+- **The library sidebar** (far left) — tabbed: **Chats** lists prior sessions for replay; **Saved** lists artifacts the Planner has persisted (shopping lists, meal plans, recipes). Clicking a saved row opens a modal with the full markdown content.
+- **The live agent graph** — every agent transfer, tool call, and MongoDB collection access lights up in real time. Multi-agent delegation made visible.
+- **The event timeline** (far right) — exact chronology with millisecond timing on every operation. Includes labelled `$vectorSearch` rows for retrieval steps.
 - **MongoDB-only persistence** — open MongoDB Compass against your cluster and watch `sessions.events`, `memory`, and `artifacts` populate as the conversation runs. The same database serves all four state roles.
 - **No MCP server in the runtime** — direct PyMongo TLS connection (port 27017). The same network shape any Python application uses.
 - **Native ADK delegation** — sub-agents declared with `sub_agents=[...]`, native event streaming via `StreamingMode.SSE`. Specialist events flow through the parent generator, which is what makes the live graph possible.

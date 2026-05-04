@@ -5,6 +5,7 @@
 
 import { create } from "zustand";
 import type {
+  ArtifactSummary,
   ChatMessage,
   DbOpRecord,
   MemoryHit,
@@ -15,6 +16,8 @@ import type {
   TimelineEntry,
   ToolBadge,
 } from "./types";
+
+export type SidebarTab = "chats" | "saved";
 
 type EdgeKey = string; // "from->to" identifying a topology edge to animate
 
@@ -65,6 +68,15 @@ interface DemoState {
   refreshSessions: () => Promise<void>;
   loadSession: (sessionId: string) => Promise<void>;
   newChat: () => void;
+
+  // Saved artifacts (Saved tab in sidebar)
+  sidebarTab: SidebarTab;
+  setSidebarTab: (t: SidebarTab) => void;
+  artifactList: ArtifactSummary[];
+  loadingArtifacts: boolean;
+  selectedArtifactId: string | null;
+  refreshArtifacts: () => Promise<void>;
+  openArtifact: (id: string | null) => void;
 
   // Lifecycle
   resetTurn: () => void;
@@ -282,6 +294,32 @@ export const useDemoStore = create<DemoState>((set) => ({
       pulsingEdges: new Map(),
       dbOps: [],
     }),
+
+  // ── Saved artifacts ──
+  sidebarTab: "chats",
+  setSidebarTab: (t) => set({ sidebarTab: t }),
+  artifactList: [],
+  loadingArtifacts: false,
+  selectedArtifactId: null,
+
+  refreshArtifacts: async () => {
+    const { userId } = useDemoStore.getState();
+    set({ loadingArtifacts: true });
+    try {
+      const res = await fetch(
+        `/artifacts?user_id=${encodeURIComponent(userId)}&limit=50`,
+      );
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      const json = (await res.json()) as { artifacts: ArtifactSummary[] };
+      set({ artifactList: json.artifacts });
+    } catch (err) {
+      console.error("[refreshArtifacts]", err);
+    } finally {
+      set({ loadingArtifacts: false });
+    }
+  },
+
+  openArtifact: (id) => set({ selectedArtifactId: id }),
 
   resetTurn: () => set({ timeline: [], turnStartedAt: null, dbOps: [] }),
   resetAll: () =>

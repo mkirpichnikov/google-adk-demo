@@ -91,7 +91,7 @@ MongoDB serves all four agent persistence roles so no other database is introduc
 | Vector Search / RAG | `products` | `sku`, `name`, `text`, `category`, `price`, `size`, `embedding` (1024-dim Voyage) |
 | Session State | `sessions` | `_id`, `app_name`, `user_id`, `state`, `events[]`, `created_at`, `last_update_time` |
 | Long-term Memory | `memory` | `user_id`, `text`, `embedding`, `kind` (`preference` or `session_summary`), `created_at` |
-| Artifact / Audit Store | `artifacts` | `session_id`, `kind`, `content`, `created_at` |
+| Artifact / Audit Store | `artifacts` | `user_id`, `session_id`, `kind`, `content`, `created_at` |
 
 See [MEMORY.md](MEMORY.md) for the deep dive on how sessions and memory are wired through.
 
@@ -188,7 +188,7 @@ All four tools are plain Python functions in [agent/tools.py](agent/tools.py):
 | `search_products(query, limit=5, max_price?, min_price?, category?)` | Catalog, Planner | reads `products` | Embeds the query via Voyage, runs `$vectorSearch` then optional `$match` post-filter on price / category, returns `[{sku, name, category, price, size, score}]` |
 | `save_preference(preference)` | Butler | writes `memory` | Reads `user_id` from contextvars (never from the LLM) |
 | `recall_preferences(query, limit=5)` | Butler | reads `memory` | `$vectorSearch` filtered on `user_id` |
-| `record_artifact(kind, content)` | Planner | writes `artifacts` | `kind` is one of `shopping_list`, `meal_plan`, `recipe` |
+| `record_artifact(kind, content)` | Planner | writes `artifacts` | `kind` is one of `shopping_list`, `meal_plan`, `recipe`. Both `user_id` and `session_id` are read from contextvars; the user-scoped list is exposed via `GET /artifacts?user_id=...` and rendered in the Saved tab. |
 
 `user_id` and `session_id` are deliberately not tool arguments — they're read from `agent.context` contextvars set by the HTTP server. This prevents the LLM from hallucinating identifiers.
 

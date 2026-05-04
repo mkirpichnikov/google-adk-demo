@@ -143,23 +143,29 @@ def save_preference(preference: str) -> dict[str, str]:
 def record_artifact(kind: str, content: str) -> dict[str, str]:
     """Persist an agent-generated artifact (e.g. shopping list, recipe).
 
-    The session identifier is read from per-turn context; the model does
-    not need to supply it.
+    Both the session and user identifiers are read from per-turn context
+    so the model never needs to supply them. user_id is what makes the
+    artifact discoverable later from the customer's `Saved` tab.
 
     Args:
         kind: Artifact type (e.g. 'shopping_list', 'recipe', 'meal_plan').
-        content: The artifact body as text.
+        content: The artifact body as markdown text.
     """
     session_id = current_session_id()
+    user_id = current_user_id()
     result = db.artifacts().insert_one(
         {
+            "user_id": user_id,
             "session_id": session_id,
             "kind": kind,
             "content": content,
             "created_at": datetime.now(timezone.utc),
         }
     )
-    log.info("record_artifact(session=%s, kind=%s) saved", session_id, kind)
+    log.info(
+        "record_artifact(user=%s, session=%s, kind=%s) saved",
+        user_id, session_id, kind,
+    )
     return {"status": "saved", "artifact_id": str(result.inserted_id)}
 
 

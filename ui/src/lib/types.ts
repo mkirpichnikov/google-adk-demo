@@ -115,6 +115,15 @@ export interface ReplayTurn {
   tool_results: { name: string; result: unknown }[];
 }
 
+export interface ArtifactSummary {
+  artifact_id: string;
+  kind: string;
+  title: string;
+  content: string;
+  session_id: string | null;
+  created_at: string | null;
+}
+
 export interface DbOpRecord {
   request_id: number;
   op: string;

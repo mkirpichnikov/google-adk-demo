@@ -1,0 +1,22 @@
+.git
+.gitignore
+.env
+.env.*
+!.env.example
+__pycache__
+*.pyc
+.venv
+venv
+.pytest_cache
+.ruff_cache
+tests/
+*.md
+!README.md
+sa-key*.json
+gcp-credentials*.json
+
+# UI: never ship these into the build context — node_modules and dist
+# are produced inside the multi-stage Docker build.
+ui/node_modules
+ui/dist
+ui/.vite

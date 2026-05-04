@@ -1,0 +1,76 @@
+@import "tailwindcss";
+@import "reactflow/dist/style.css";
+
+@theme {
+  --color-woolies: #00852B;
+  --color-woolies-light: #E8F5E9;
+  --color-woolies-dark: #005A1D;
+  --color-mongo: #00684A;
+  --color-mongo-light: #E5F4EE;
+  --color-gemini: #1565C0;
+  --color-gemini-light: #E3F2FD;
+  --color-amber-soft: #F57F17;
+  --color-amber-bg: #FFF8E1;
+  --color-purple-soft: #7B1FA2;
+  --color-purple-bg: #F3E5F5;
+}
+
+html, body, #root {
+  margin: 0;
+  height: 100%;
+  background: #FAFAFA;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  color: #212121;
+}
+
+/* Pulse animation for active agents */
+@keyframes pulse-active {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 133, 43, 0.6); }
+  50%      { box-shadow: 0 0 0 12px rgba(0, 133, 43, 0); }
+}
+.pulse-active { animation: pulse-active 1.4s ease-in-out infinite; }
+
+/* Pulse for active DB collections (MongoDB green) */
+@keyframes pulse-db {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(0, 104, 74, 0.6); }
+  50%      { box-shadow: 0 0 0 12px rgba(0, 104, 74, 0); }
+}
+.pulse-db { animation: pulse-db 1.0s ease-in-out infinite; }
+
+/* Particle on edge */
+@keyframes particle-flow {
+  0%   { offset-distance: 0%;   opacity: 0; }
+  10%  {                       opacity: 1; }
+  90%  {                       opacity: 1; }
+  100% { offset-distance: 100%; opacity: 0; }
+}
+
+/* Markdown rendering inside agent chat bubbles */
+.markdown-body { line-height: 1.55; }
+.markdown-body p { margin: 0 0 0.5em 0; }
+.markdown-body p:last-child { margin-bottom: 0; }
+.markdown-body h1 { font-size: 1.05rem; font-weight: 600; margin: 0.5em 0 0.3em; }
+.markdown-body h2 { font-size: 1rem;     font-weight: 600; margin: 0.5em 0 0.3em; color: #005A1D; }
+.markdown-body h3 { font-size: 0.95rem;  font-weight: 600; margin: 0.4em 0 0.2em; }
+.markdown-body strong { font-weight: 600; color: #111; }
+.markdown-body em { font-style: italic; }
+.markdown-body ul, .markdown-body ol { margin: 0.3em 0 0.6em 0; padding-left: 1.25rem; }
+.markdown-body ul { list-style: disc; }
+.markdown-body ol { list-style: decimal; }
+.markdown-body li { margin: 0.1em 0; }
+.markdown-body li > p { margin: 0; }
+.markdown-body code { background: #f4f4f5; padding: 1px 5px; border-radius: 4px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 0.86em; color: #c2410c; }
+.markdown-body pre { background: #f4f4f5; padding: 8px 12px; border-radius: 6px; overflow-x: auto; margin: 0.4em 0; }
+.markdown-body pre code { background: transparent; padding: 0; color: inherit; }
+.markdown-body a { color: #00684A; text-decoration: underline; }
+.markdown-body blockquote { border-left: 3px solid #d4d4d8; padding-left: 0.7em; color: #525252; margin: 0.4em 0; }
+.markdown-body hr { border: 0; border-top: 1px solid #e5e5e5; margin: 0.6em 0; }
+.markdown-body table { border-collapse: collapse; margin: 0.4em 0; }
+.markdown-body th, .markdown-body td { border: 1px solid #e5e5e5; padding: 4px 8px; }
+.markdown-body th { background: #fafafa; font-weight: 600; }
+
+/* Scrollbar polish */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #d4d4d4; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }

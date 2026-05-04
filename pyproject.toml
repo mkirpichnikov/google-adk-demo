@@ -1,0 +1,33 @@
+[project]
+name = "google-adk-mongodb-demo"
+version = "0.1.0"
+description = "Custom Google ADK agent using MongoDB Atlas (auto-embedded Voyage AI) as the only datastore"
+requires-python = ">=3.11"
+dependencies = [
+    "google-adk>=0.2.0",
+    "google-cloud-aiplatform>=1.71.0",
+    "pymongo[srv]>=4.10.0",
+    "fastapi>=0.115.0",
+    "uvicorn[standard]>=0.32.0",
+    "python-dotenv>=1.0.1",
+    "pydantic>=2.9.0",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.3.0",
+    "pytest-asyncio>=0.24.0",
+    "ruff>=0.7.0",
+]
+
+[project.scripts]
+adk-demo-cli = "agent.main:main"
+adk-demo-ingest = "scripts.ingest:main"
+adk-demo-create-index = "scripts.create_index:main"
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.pytest.ini_options]
+asyncio_mode = "auto"

@@ -1,0 +1,32 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+venv/
+.env
+.env.local
+*.log
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+dist/
+build/
+.DS_Store
+.vscode/
+.idea/
+*.swp
+sa-key*.json
+gcp-credentials*.json
+.claude/
+# CLAUDE.md is Claude Code's project memory file — tool-specific. The
+# tool-agnostic version of the same content lives in ARCHITECTURE.md.
+# Keep CLAUDE.md locally if you use Claude Code in this repo (you can
+# symlink: ln -s ARCHITECTURE.md CLAUDE.md), but never commit it.
+CLAUDE.md
+
+# Local Claude Code MCP server config (NOT part of the demo runtime —
+# only used during development for direct Atlas inspection from Claude
+# Code). Contains a plaintext MongoDB connection string. If accidentally
+# committed, rotate the Atlas DB user password and force-push clean history.
+.mcp.json

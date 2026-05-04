@@ -149,14 +149,24 @@ function MessageBubble({ m }: { m: ReturnType<typeof useDemoStore.getState>["mes
           >
             {agentLabel}
           </span>
-          {m.toolBadges?.map((b, i) => (
-            <span
-              key={i}
-              className="text-[10px] uppercase tracking-wide font-semibold px-1.5 py-0.5 rounded bg-neutral-100 text-neutral-700"
-            >
-              {b.tool.replace("_", " ")}
-            </span>
-          ))}
+          {m.toolBadges?.map((b, i) => {
+            const isArtifact = b.tool === "record_artifact";
+            const label = isArtifact && b.detail
+              ? `Saved as ${b.detail.replace("_", " ")}`
+              : b.tool.replace(/_/g, " ");
+            return (
+              <span
+                key={i}
+                className={
+                  isArtifact
+                    ? "text-[10px] uppercase tracking-wide font-semibold px-1.5 py-0.5 rounded bg-woolies-light text-woolies"
+                    : "text-[10px] uppercase tracking-wide font-semibold px-1.5 py-0.5 rounded bg-neutral-100 text-neutral-700"
+                }
+              >
+                {label}
+              </span>
+            );
+          })}
         </div>
 
         {m.memoryRecalled && m.memoryRecalled.length > 0 && (

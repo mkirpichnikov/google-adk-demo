@@ -97,6 +97,8 @@ export interface ToolBadge {
   tool: string;
   agent: string;
   ok?: boolean;
+  /** Optional human-readable detail (e.g. the `kind` argument for record_artifact). */
+  detail?: string;
 }
 
 export interface SessionSummary {

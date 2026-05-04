@@ -62,7 +62,15 @@ export function dispatchEvent(event: ServerEvent) {
       store.setAgentActive(event.tool, true); // re-use active set for tools too
       // Attach a badge to the active agent bubble.
       if (activeAgentMsgId && activeAgentName === event.agent) {
-        store.attachToolBadge(activeAgentMsgId, { tool: event.tool, agent: event.agent });
+        const detail =
+          event.tool === "record_artifact"
+            ? String(event.args?.kind ?? "")
+            : undefined;
+        store.attachToolBadge(activeAgentMsgId, {
+          tool: event.tool,
+          agent: event.agent,
+          detail,
+        });
         if (event.tool === "search_products") {
           callIdToProducts.set(event.call_id, activeAgentMsgId);
         }

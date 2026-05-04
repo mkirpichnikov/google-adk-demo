@@ -1,16 +1,10 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { useDemoStore } from "../lib/store";
 import { streamChat } from "../lib/sse";
 import { dispatchEvent } from "../lib/dispatch";
-
-const SUGGESTED = [
-  "What can you help me with?",
-  "I'm vegetarian and have two kids",
-  "Find healthy snacks under $5",
-  "Plan a $30 vegetarian dinner for four",
-];
+import { samplePrompts } from "../lib/prompts";
 
 const AGENT_ACCENT: Record<string, string> = {
   orchestrator: "#1565C0",
@@ -29,6 +23,12 @@ export function Chat() {
 
   const [input, setInput] = useState("");
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  // Sample fresh prompts when the conversation is empty (page load and
+  // after "New chat"). Memoised against `messages.length === 0` so the
+  // chips stay stable mid-conversation.
+  const isEmpty = messages.length === 0;
+  const suggested = useMemo(() => samplePrompts(), [isEmpty]);
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -56,7 +56,7 @@ export function Chat() {
   return (
     <div className="flex flex-col h-full">
       <div ref={scrollRef} className="flex-1 overflow-y-auto px-6 py-4 space-y-4">
-        {messages.length === 0 && <EmptyState onPick={send} />}
+        {messages.length === 0 && <EmptyState onPick={send} suggested={suggested} />}
         {messages.map((m) => (
           <MessageBubble key={m.id} m={m} />
         ))}
@@ -64,7 +64,7 @@ export function Chat() {
 
       <div className="border-t border-neutral-200 bg-white px-6 py-3">
         <div className="flex flex-wrap gap-2 mb-2">
-          {SUGGESTED.map((p) => (
+          {suggested.map((p) => (
             <button
               key={p}
               onClick={() => send(p)}
@@ -104,14 +104,14 @@ export function Chat() {
   );
 }
 
-function EmptyState({ onPick }: { onPick: (text: string) => void }) {
+function EmptyState({ onPick, suggested }: { onPick: (text: string) => void; suggested: string[] }) {
   return (
     <div className="text-center pt-12 pb-6">
       <p className="text-neutral-500 text-sm mb-4">
         Try one of these to see the agents collaborate:
       </p>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-w-xl mx-auto">
-        {SUGGESTED.map((p) => (
+        {suggested.map((p) => (
           <button
             key={p}
             onClick={() => onPick(p)}

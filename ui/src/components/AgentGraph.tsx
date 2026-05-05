@@ -79,7 +79,7 @@ const NODES: Node<AnyNodeData>[] = [
 
   // Server-side recall arrow source (memory always-on RAG happens at server, not via a tool)
   { id: "server", type: "agent", position: { x: 380, y: -90 },
-    data: { label: "FastAPI server", sublabel: "prepends user memories to every prompt", variant: "server", active: false } },
+    data: { label: "Assistant UI", sublabel: "React + FastAPI", variant: "server", active: false } },
 
   // sessions sits next to the FastAPI server, OUTSIDE the ADK boundary's
   // right edge (boundary spans x=-40..860; sessions at x=900). No agent

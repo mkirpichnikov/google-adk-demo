@@ -179,15 +179,15 @@ export const NODE_DOCS: Record<string, NodeDoc> = {
     files: ["agent/tools.py"],
   },
   server: {
-    title: "FastAPI server",
-    category: "Server",
+    title: "Assistant UI (React + FastAPI)",
+    category: "Application",
     summary:
-      "Single Python process serving both the React SPA (static) and the live SSE stream. Per-request EventBus fans in agent events and MongoDB command events.",
+      "Single Python process serving both the React SPA (Vite-built static assets) and the live SSE stream. Per-request EventBus fans in agent events and MongoDB command events.",
     details: [
-      "Endpoints: GET / (SPA), POST /chat/stream (SSE), GET /sessions, GET /sessions/{id}, GET /healthz.",
-      "Always-on memory recall: every turn embeds the user message and does $vectorSearch on memory before the agent runs.",
-      "PyMongo CommandListener registered on the singleton MongoClient — every command surfaces as a db_op event.",
-      "Bind contextvars (user_id, session_id, event_queue) once per request before invoking the runner.",
+      "Endpoints: GET / (SPA), POST /chat/stream (SSE), GET /sessions, GET /sessions/{id}, GET /artifacts, GET /healthz.",
+      "Prepends user memories to every prompt: each turn embeds the user message, runs $vectorSearch on memory, formats hits into a [Known about this customer] block, and prepends them before the agent sees the message.",
+      "PyMongo CommandListener registered on the singleton MongoClient — every command surfaces as a db_op event in the live timeline.",
+      "Binds contextvars (user_id, session_id, event_queue) once per request before invoking the runner.",
     ],
     files: [
       "agent/server.py",

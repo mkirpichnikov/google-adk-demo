@@ -302,7 +302,7 @@ gcloud run deploy adk-agent \
 
 ### Recommended Region
 
-`australia-southeast1` (Sydney) — closest to Woolworths HQ, keeps data onshore. Vertex AI Gemini is available in this region.
+Pick the region closest to your end users. Co-locate your Atlas cluster and Vertex AI in the same region so request traffic stays in-region and round-trip latency stays low (typically saves ~50ms per turn). All major Vertex AI regions support Gemini.
 
 ---
 

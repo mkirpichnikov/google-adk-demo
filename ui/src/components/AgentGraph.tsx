@@ -79,8 +79,14 @@ const NODES: Node<AnyNodeData>[] = [
 
   // Server-side recall arrow source (memory always-on RAG happens at server, not via a tool)
   { id: "server", type: "agent", position: { x: 380, y: -90 },
-    data: { label: "FastAPI server", sublabel: "always-on memory recall", variant: "server", active: false } },
-  { id: "sessions", type: "agent", position: { x: 780, y: -50 },
+    data: { label: "FastAPI server", sublabel: "prepends user memories to every prompt", variant: "server", active: false } },
+
+  // sessions sits next to the FastAPI server, OUTSIDE the ADK boundary's
+  // right edge (boundary spans x=-40..860; sessions at x=900). No agent
+  // tool reads or writes it — only the MongoSessionService at the server
+  // level — so the short server→sessions edge keeps the data flow legible
+  // without crossing through the boundary frame.
+  { id: "sessions", type: "agent", position: { x: 900, y: -90 },
     data: { label: "sessions", sublabel: "MongoDB", variant: "db", active: false } },
 ];
 

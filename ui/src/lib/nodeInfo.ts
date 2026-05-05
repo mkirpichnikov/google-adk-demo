@@ -58,7 +58,7 @@ export const NODE_DOCS: Record<string, NodeDoc> = {
     details: [
       "Tools: save_preference (write), recall_preferences (read).",
       "save_preference fires when the customer reveals a durable fact (allergy, diet, household size, brand loyalty, budget).",
-      "recall_preferences explicitly looks up what's already known — complements the always-on memory recall preface in the server.",
+      "recall_preferences is for explicit lookups — it complements the server-level pass that prepends user memories to every prompt before the agent sees it.",
       "Uses contextvars to read user_id without exposing it to the LLM.",
     ],
     files: ["agent/core.py", "agent/tools.py", "agent/context.py"],

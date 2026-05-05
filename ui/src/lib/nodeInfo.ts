@@ -180,7 +180,7 @@ export const NODE_DOCS: Record<string, NodeDoc> = {
   },
   server: {
     title: "Assistant UI (React + FastAPI)",
-    category: "Application",
+    category: "Server",
     summary:
       "Single Python process serving both the React SPA (Vite-built static assets) and the live SSE stream. Per-request EventBus fans in agent events and MongoDB command events.",
     details: [

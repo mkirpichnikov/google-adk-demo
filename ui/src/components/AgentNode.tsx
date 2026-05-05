@@ -40,6 +40,11 @@ export function AgentNode({ data }: NodeProps<AgentNodeData>) {
       {data.sublabel && (
         <div className="text-[10px] opacity-70 mt-0.5 leading-tight">{data.sublabel}</div>
       )}
+      {data.variant === "specialist" && (
+        <div className="text-[9px] italic opacity-50 mt-0.5 leading-tight tracking-wide">
+          sub-agent
+        </div>
+      )}
       <Handle type="source" position={Position.Bottom} style={{ background: v.ring, opacity: 0 }} />
     </div>
   );

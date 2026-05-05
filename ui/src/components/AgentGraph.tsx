@@ -9,14 +9,42 @@ import ReactFlow, {
 
 import { useDemoStore, edgeKey } from "../lib/store";
 import { AgentNode, type AgentNodeData } from "./AgentNode";
+import { BoundaryNode, type BoundaryNodeData } from "./BoundaryNode";
 import { NodeDetailPanel } from "./NodeDetailPanel";
 
-const nodeTypes = { agent: AgentNode };
+const nodeTypes = { agent: AgentNode, boundary: BoundaryNode };
 
 // Topology — kept in sync with the backend's actual capabilities.
 // Layout uses absolute coordinates because we want the visual to be stable
 // across runs (no surprise auto-layout shifts mid-demo).
-const NODES: Node<AgentNodeData>[] = [
+//
+// Boundary nodes (variant: boundary) are pure visual frames and live FIRST
+// in the array so they render behind the interactive agent nodes.
+type AnyNodeData = AgentNodeData | BoundaryNodeData;
+
+const NODES: Node<AnyNodeData>[] = [
+  // Boundary: ADK runtime — wraps the orchestrator + sub-agents + tools.
+  // Sized to encompass row 0 (orchestrator at y=0) through row 2 (tools at
+  // y=260, ~60px tall) with breathing room. NOT around MongoDB collections
+  // or the FastAPI server — those are external to the ADK code.
+  {
+    id: "adk_boundary",
+    type: "boundary",
+    position: { x: -40, y: -30 },
+    data: {
+      label: "Custom Python ADK runtime",
+      sublabel: "orchestrator + sub-agents + tools",
+      width: 900,
+      height: 380,
+      tint: "rgba(21, 101, 192, 0.55)",
+      fill: "rgba(21, 101, 192, 0.05)",
+    } as BoundaryNodeData,
+    draggable: false,
+    selectable: false,
+    focusable: false,
+    zIndex: -1,
+  },
+
   // Row 0: orchestrator
   { id: "orchestrator", type: "agent", position: { x: 380, y: 0 },
     data: { label: "Orchestrator", sublabel: "gemini-2.5-flash", variant: "orchestrator", active: false } },
@@ -92,13 +120,15 @@ export function AgentGraph() {
     return () => clearInterval(id);
   }, []);
 
-  const nodes = useMemo<Node<AgentNodeData>[]>(() => {
+  const nodes = useMemo<Node<AnyNodeData>[]>(() => {
     return NODES.map((n) => {
+      // Boundary nodes are static decorations — no active state.
+      if (n.type === "boundary") return n;
       const isAgent = activeAgents.has(n.id);
       const isDb = (activeDb.get(n.id) ?? 0) > 0;
       return {
         ...n,
-        data: { ...n.data, active: isAgent || isDb },
+        data: { ...(n.data as AgentNodeData), active: isAgent || isDb },
       };
     });
   }, [activeAgents, activeDb]);

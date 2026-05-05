@@ -124,10 +124,19 @@ export function dispatchEvent(event: ServerEvent) {
       // Voyage isn't a Mongo collection, but it lives at ai.mongodb.com
       // (Atlas-hosted Voyage) and pulses with the same in-flight semantics
       // as a db_op — reuse the activeDbCollections map keyed on the node id.
+      //
+      // Two visibility tweaks for fast embed calls:
+      //  1. Trigger the server→voyage edge on EVERY event so even a 200ms
+      //     embed produces a 1.2s edge-decay animation the audience can see.
+      //  2. Hold the node "active" for at least 900ms after the end event
+      //     so the pulse-db animation has time to render at least one full
+      //     cycle (CSS animation is 1s; with sub-1s call duration the node
+      //     would otherwise flicker imperceptibly).
+      store.triggerEdge(edgeKey("server", "voyage_api"));
       if (event.phase === "start") {
         store.beginDbOp("voyage_api");
       } else {
-        store.endDbOp("voyage_api");
+        setTimeout(() => store.endDbOp("voyage_api"), 900);
       }
       break;
     }

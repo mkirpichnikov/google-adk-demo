@@ -196,4 +196,18 @@ export const NODE_DOCS: Record<string, NodeDoc> = {
       "agent/db_listener.py",
     ],
   },
+  voyage_api: {
+    title: "Atlas Embedding API",
+    category: "MongoDB collection",
+    summary:
+      "MongoDB-hosted Voyage AI embedding endpoint at https://ai.mongodb.com/v1/embeddings. Turns text into 1024-dim vectors that get fed into $vectorSearch.queryVector on the products and memory collections.",
+    details: [
+      "Auth: Bearer token using an Atlas Model API Key (Project Settings → AI Models). The application code never sees a separate VoyageAI account.",
+      "Called by: search_products and recall_preferences (embed the query string), save_preference (embed the document), and the server-level memory recall pass (embed every user message).",
+      "Model: voyage-4-large by default; configurable via EMBEDDING_MODEL.",
+      "Each call publishes voyage_call events (start/end with duration_ms) onto the per-request bus, which is what makes this node pulse live in the graph alongside the MongoDB collections.",
+      "Future: Atlas autoEmbed (public preview pending) will move embedding fully server-side — agent/embeddings.py disappears and $vectorSearch takes a `query` string instead of `queryVector`.",
+    ],
+    files: ["agent/embeddings.py", "agent/tools.py", "agent/server.py"],
+  },
 };

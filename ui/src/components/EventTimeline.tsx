@@ -18,6 +18,7 @@ const EVENT_STYLES: Record<
   text_delta:      { label: "TEXT DELTA",       bg: "#FAFAFA", fg: "#616161" },
   agent_done:      { label: "AGENT DONE",       bg: "#F5F5F5", fg: "#424242" },
   db_op:           { label: "DB OP",            bg: "#E5F4EE", fg: "#003D2A" },
+  voyage_call:     { label: "EMBED",             bg: "#E0F7FA", fg: "#006064" },
   turn_end:        { label: "TURN END",         bg: "#EEEEEE", fg: "#212121" },
   error:           { label: "ERROR",            bg: "#FFEBEE", fg: "#B71C1C" },
 };
@@ -141,6 +142,20 @@ function EventDetail({ event }: { event: ServerEvent }) {
           <span className="font-semibold">{label}</span>
           <span className="text-neutral-500"> on {event.collection}</span>
           <span className="text-neutral-500">{dur}{docs}</span>
+        </span>
+      );
+    }
+    case "voyage_call": {
+      const phase = event.phase === "start" ? "▶" : "✓";
+      const dur =
+        event.phase === "end" && event.duration_ms !== undefined
+          ? ` · ${event.duration_ms.toFixed(0)} ms`
+          : "";
+      return (
+        <span className="text-neutral-700">
+          <span className="text-cyan-700">{phase}</span>{" "}
+          <span className="font-semibold">{event.input_type}</span>
+          <span className="text-neutral-500"> · {event.text_count} text(s) · {event.model}{dur}</span>
         </span>
       );
     }

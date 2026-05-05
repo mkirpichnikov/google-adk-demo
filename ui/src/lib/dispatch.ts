@@ -120,6 +120,18 @@ export function dispatchEvent(event: ServerEvent) {
       break;
     }
 
+    case "voyage_call": {
+      // Voyage isn't a Mongo collection, but it lives at ai.mongodb.com
+      // (Atlas-hosted Voyage) and pulses with the same in-flight semantics
+      // as a db_op — reuse the activeDbCollections map keyed on the node id.
+      if (event.phase === "start") {
+        store.beginDbOp("voyage_api");
+      } else {
+        store.endDbOp("voyage_api");
+      }
+      break;
+    }
+
     case "db_op": {
       if (event.phase === "start") {
         store.beginDbOp(event.collection);

@@ -88,12 +88,22 @@ const NODES: Node<AnyNodeData>[] = [
   // without crossing through the boundary frame.
   { id: "sessions", type: "agent", position: { x: 900, y: -90 },
     data: { label: "sessions", sublabel: "MongoDB", variant: "db", active: false } },
+
+  // Atlas Embedding API (Voyage AI hosted at ai.mongodb.com). Sits above
+  // sessions in the top-right "Atlas-hosted services" cluster. Embedding
+  // happens before any $vectorSearch — the server prepends user memories
+  // every turn (memory recall) and the embed-using tools call this too.
+  // For visual clarity we draw a single server→voyage edge; the tool-side
+  // calls are described in the click-to-expand panel.
+  { id: "voyage_api", type: "agent", position: { x: 900, y: -180 },
+    data: { label: "Atlas Embedding API", sublabel: "Voyage AI · MongoDB", variant: "db", active: false } },
 ];
 
 const STATIC_EDGES: { from: string; to: string }[] = [
   { from: "server", to: "orchestrator" },
   { from: "server", to: "memory" },
   { from: "server", to: "sessions" },
+  { from: "server", to: "voyage_api" },
 
   { from: "orchestrator", to: "concierge_agent" },
   { from: "orchestrator", to: "catalog_agent" },

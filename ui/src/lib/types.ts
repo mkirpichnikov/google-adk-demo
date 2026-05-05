@@ -68,6 +68,16 @@ export type ServerEvent =
       ok?: boolean;
       error?: string;
     }
+  | {
+      kind: "voyage_call";
+      phase: "start" | "end";
+      model: string;
+      input_type: string;
+      text_count: number;
+      duration_ms?: number;
+      ok?: boolean;
+      error?: string;
+    }
   | { kind: "turn_end"; turn_id: string; reply: string }
   | { kind: "error"; message: string };
 
